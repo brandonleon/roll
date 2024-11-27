@@ -1,65 +1,134 @@
-# Roll Utility
+# Dice Rolling Application
 
-The `roll` utility is a command-line tool for rolling dice using standard dice notation. It allows users to specify the number of dice, the number of sides on each die, and any modifiers to the total roll.
+This is a simple command-line application for rolling dice based on user-defined notation. The application allows users to specify how many dice to roll and the number of sides on each die, as well as any modifiers to the total roll.
+
+## Features
+
+-    Parse dice notation such as `2d6`, `3d10+2`, and `1d20-1`.
+-    Roll multiple dice at once.
+-    Calculate the total of the rolls including any modifiers.
+-    Display the results in a user-friendly format.
+
+## Requirements
+
+-    Python 3.7 or higher
+-    Typer library for command-line interface
+
+You can install Typer using pip:
+
+```bash
+pip install typer
+```
+
+## Installation
+
+1. Clone the repository:
+
+  ```bash
+   git clone https://github.com/yourusername/dice-roller.git
+   cd dice-roller
+   ```
+
+2. Install the required dependencies:
+
+  ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Usage
 
-You can run the utility from the command line as follows:
+To roll dice, run the application with the desired dice notation. For example:
 
-```
-python roll.py "<dice-notation>"
+```bash
+python dice_roller.py roll "2d6+3"
 ```
 
 ### Dice Notation
 
-Dice notation is a way to specify how many dice to roll and what type of dice to use. The general format is:
+The dice notation follows the format:
 
-```
-XdY[+/-Z]
-```
+```XdY[+/-Z]```
 
 Where:
--   **X**: The number of dice to roll (optional, defaults to 1 if omitted).
--   **Y**: The number of sides on each die (required).
--   **Z**: An optional modifier that can be added or subtracted from the total.
+-    `X` is the number of dice to roll (default is 1 if omitted).
+-    `Y` is the number of sides on each die.
+-    `Z` is an optional modifier to add or subtract from the total roll.
 
 ### Examples
 
-1. **Single Die Roll**:
-   - Notation: `d6`
-   - Description: Rolls one six-sided die.
-   - Output: `Rolls: [4]`, `Total: 4`
+-    Roll two six-sided dice and add 3 to the total:
 
-2. **Multiple Dice Roll**:
-   - Notation: `3d8`
-   - Description: Rolls three eight-sided dice.
-   - Output: `Rolls: [5, 3, 7]`, `Total: 15`
+  ```bash
+   python dice_roller.py roll "2d6+3"
+   ```
 
-3. **Dice Roll with Modifier**:
-   - Notation: `2d10+5`
-   - Description: Rolls two ten-sided dice and adds 5 to the total.
-   - Output: `Rolls: [9, 6]`, `Total: 20`
+-    Roll three ten-sided dice:
 
-4. **Dice Roll with Negative Modifier**:
-   - Notation: `4d6-2`
-   - Description: Rolls four six-sided dice and subtracts 2 from the total.
-   - Output: `Rolls: [3, 5, 2, 4]`, `Total: 12`
+  ```bash
+   python dice_roller.py roll "3d10"
+   ```
 
-5. **Complex Notation**:
-   - Notation: `2d6+3d4-1`
-   - Description: Rolls two six-sided dice and three four-sided dice, then subtracts 1 from the total.
-   - Output: `Rolls: [4, 2, 1, 3, 4]`, `Total: 13`
+-    Roll one twenty-sided die and subtract 1 from the total:
 
-## Error Handling
+  ```bash
+   python dice_roller.py roll "1d20-1"
+   ```
 
-If the input dice notation is invalid, the utility will return an error message. For example, using an incorrect format like `2d+3` will result in:
+## Code Overview
 
-```
-Error: Invalid dice notation: 2d+3
-```
+The main components of the application include:
 
-## Conclusion
+1. **Die Class**: Represents a single die and provides functionality to roll it.
 
-The `roll` utility is a simple and effective tool for rolling dice with various configurations. Whether you're a tabletop gamer or just need some random numbers, this utility can help you quickly generate the results you need.
+   ```python
+   class Die:
+       def __init__(self, sides: int):
+           self.sides = sides
 
-Feel free to customize and expand this utility to fit your specific needs!
+       def roll(self) -> int:
+           """Rolls the die and returns the result."""
+           return random.randint(1, self.sides)
+   ``` 
+
+2. **DieCollection Class**: Represents a collection of dice, allowing for multiple dice to be rolled together.
+
+   ```python
+   class DieCollection:
+       def __init__(self):
+           self.dice: List[Tuple[int, Die]] = []
+
+       def add_dice(self, num_dice: int, sides: int):
+           """Adds a number of dice with the specified sides to the collection."""
+           die = Die(sides)
+           self.dice.append((num_dice, die))
+
+       def roll_all(self) -> List[int]:
+           """Rolls all dice in the collection and returns the results."""
+           rolls = []
+           for num_dice, die in self.dice:
+               rolls.extend(die.roll() for _ in range(num_dice))
+           return rolls
+   ``` 
+
+3. **parse_dice_notation Function**: Parses the user input and returns a `DieCollection` representing the dice to be rolled.
+
+   ```python
+   def parse_dice_notation(dice: str) -> DieCollection:
+       # Implementation...
+   ``` 
+
+4. **Roll Command**: The command-line interface that handles user input and displays the results.
+
+   ```python
+   @app.command()
+   def roll(dice: str):
+       # Implementation...
+   ``` 
+
+## Contributing
+
+Contributions are welcome! If you have suggestions for improvements or new features, feel free to create an issue or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
