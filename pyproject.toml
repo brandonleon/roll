@@ -12,3 +12,6 @@ dependencies = [
 dev = [
     "icecream>=2.1.3",
 ]
+
+[project.scripts]
+roll = "roll:app"
