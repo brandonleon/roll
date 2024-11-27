@@ -1,3 +1,5 @@
+"""A simple command-line tool for rolling dice using dice notation."""
+
 import random
 import re
 from typing import List, Tuple, Optional
@@ -7,25 +9,31 @@ app = typer.Typer()
 
 
 class Die:
+    """A class representing a die with a number of sides."""
+
     def __init__(self, sides: int):
+        """Initialize the die with the number of sides."""
         self.sides = sides
 
     def roll(self) -> int:
-        """Rolls the die and returns the result."""
+        """Roll the die and returns the result."""
         return random.randint(1, self.sides)
 
 
 class DieCollection:
+    """A class representing a collection of dice with different numbers of sides."""
+
     def __init__(self):
+        """Initialize the collection of dice."""
         self.dice: List[Tuple[int, Die]] = []
 
     def add_dice(self, num_dice: int, sides: int):
-        """Adds a number of dice with the specified sides to the collection."""
+        """Add a number of dice with the specified sides to the collection."""
         die = Die(sides)
         self.dice.append((num_dice, die))
 
     def roll_all(self) -> List[int]:
-        """Rolls all dice in the collection and returns the results."""
+        """Roll all dice in the collection and returns the results."""
         rolls = []
         for num_dice, die in self.dice:
             rolls.extend(die.roll() for _ in range(num_dice))
@@ -33,9 +41,7 @@ class DieCollection:
 
 
 def parse_dice_notation(dice: str) -> DieCollection:
-    """
-    Parses a dice notation string into a DieCollection representing
-    the number of dice and the number of sides.
+    """Parse a die notation string into a DieCollection representing the number of dice and the number of sides.
 
     Args:
         dice (str): The dice notation string (e.g., "2d6", "3d10+2").
@@ -45,6 +51,7 @@ def parse_dice_notation(dice: str) -> DieCollection:
 
     Raises:
         ValueError: If the dice notation is invalid.
+
     """
     # Regular expression to match dice notation
     dice_regex = r"(\d*)d(\d+)([+-]\d+)?"
@@ -63,8 +70,7 @@ def parse_dice_notation(dice: str) -> DieCollection:
 
 
 def calculate_total(rolls: List[int], modifier: Optional[int] = 0) -> int:
-    """
-    Calculates the total of the dice rolls including a modifier.
+    """Calculate the total of the dice rolls including a modifier.
 
     Args:
         rolls (List[int]): The list of dice rolls.
@@ -72,17 +78,18 @@ def calculate_total(rolls: List[int], modifier: Optional[int] = 0) -> int:
 
     Returns:
         int: The total value of the rolls plus the modifier.
+
     """
     return sum(rolls) + (modifier if modifier else 0)
 
 
 @app.command()
 def roll(dice: str):
-    """
-    Rolls dice according to the provided notation and prints the results.
+    """Roll dice according to the provided notation and prints the results.
 
     Args:
         dice (str): The dice notation (e.g., "2d6+3").
+
     """
     try:
         # Parse the dice notation and get a DieCollection
