@@ -4,6 +4,8 @@ import random
 import re
 from typing import List, Tuple, Optional
 import typer
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as get_version
 
 app = typer.Typer()
 
@@ -80,11 +82,24 @@ def calculate_total(rolls: List[int], modifier: Optional[int] = 0) -> int:
         int: The total value of the rolls plus the modifier.
 
     """
-    return sum(rolls) + (modifier if modifier else 0)
+    return sum(rolls) + (modifier or 0)
+
+
+def version_callback(value: bool):
+    if value:
+        try:
+            version = get_version("roll")
+            typer.echo(f"Version: {version}")
+        except PackageNotFoundError:
+            typer.echo("Version information not available.")
+        raise typer.Exit()
 
 
 @app.command()
-def roll(dice: str):
+def roll(
+    dice: str = typer.Argument(None, help="The dice notation to roll (e.g., '2d6+3')."),
+    version: bool = typer.Option(None, "--version", "-v", callback=version_callback),
+):
     """Roll dice according to the provided notation and prints the results.
 
     Args:
@@ -100,7 +115,7 @@ def roll(dice: str):
 
         # Check for modifiers in the input
         modifier_match = re.search(r"([+-]\d+)$", dice)
-        total_modifier = int(modifier_match.group(0)) if modifier_match else 0
+        total_modifier = int(modifier_match[0]) if modifier_match else 0
 
         # Calculate total
         total = calculate_total(total_rolls, total_modifier)
