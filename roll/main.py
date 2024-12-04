@@ -104,6 +104,7 @@ def roll(
 
     Args:
         dice (str): The dice notation (e.g., "2d6+3").
+        version (bool): Flag to display the version of the tool.
 
     """
     try:
