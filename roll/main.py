@@ -2,10 +2,11 @@
 
 import random
 import re
-from typing import List, Tuple, Optional
-import typer
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as get_version
+from typing import List, Optional, Tuple
+
+import typer
 
 app = typer.Typer()
 
