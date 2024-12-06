@@ -8,7 +8,7 @@ from typing import List, Optional, Tuple
 
 import typer
 
-app = typer.Typer()
+app = typer.Typer(rich_markup_mode="markdown")
 
 
 class Die:
@@ -96,10 +96,23 @@ def version_callback(value: bool):
         raise typer.Exit()
 
 
+die_roll_help = """
+given in the form AdX. A and X are variables, separated by the letter d, which stands for die or dice.  
+- A is the number of dice to be rolled (omitted if 1).
+- X is the number of faces of each die. The faces are numbered from 1 to X, with the assumption that the die generates a random integer in that range, with uniform probability.
+"""
+
+
 @app.command()
 def roll(
-    dice: str = typer.Argument(None, help="The dice notation to roll (e.g., '2d6+3')."),
-    version: bool = typer.Option(None, "--version", "-v", callback=version_callback),
+    dice: str = typer.Argument(None, help=die_roll_help),
+    version: bool = typer.Option(
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        help="Display the version of the tool.",
+    ),
 ):
     """Roll dice according to the provided notation and prints the results.
 
